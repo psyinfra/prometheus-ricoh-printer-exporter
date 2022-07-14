@@ -44,8 +44,8 @@ def get_printer_values(soups: list, urls: list):
         tag_list = soup.find_all("img", class_="ver-algn-m mgn-R5p bdr-1px-666", attrs='width')  # html-tags related to toner levels
 
         yield Printer_Values(
-            # takes the url and scrapes the ip address from it, identifying the printer and matching it to its values
-            printer_name=re.findall(r"(\w*.inm7.de)", url)[0],
+            # url is a tuple containing the name and url itself. url[0] therefore holds the name of the printer
+            printer_name=url[0],
             level_black=float(get_fill_percent(tag_list[0])),
             level_cyan=float(get_fill_percent(tag_list[1])),
             level_magenta=float(get_fill_percent(tag_list[2])),

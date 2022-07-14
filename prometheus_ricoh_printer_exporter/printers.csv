@@ -1,0 +1,5 @@
+printer_name,printer_url
+oak,http://oak.inm7.de/web/guest/en/websys/webArch/getStatus.cgi
+pine,http://pine.inm7.de/web/guest/en/websys/webArch/getStatus.cgi
+willow,http://willow.inm7.de/web/guest/de/websys/webArch/getStatus.cgi
+larch,http://larch.inm7.de/web/guest/de/websys/webArch/getStatus.cgi

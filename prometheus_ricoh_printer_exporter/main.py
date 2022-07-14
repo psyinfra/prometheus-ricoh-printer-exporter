@@ -5,24 +5,31 @@
 # Exporter entry point; handles URLs and BeautifulSoup objects
 
 import sys
+import os
 import argparse
 import time
 import requests
 import logging
+import csv
 from bs4 import BeautifulSoup as bs
 from prometheus_client import start_http_server, REGISTRY
 from . import exporter_file
 
-
 def main():
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
-    url_oak = "http://oak.inm7.de/web/guest/en/websys/webArch/getStatus.cgi"
-    url_pine = "http://pine.inm7.de/web/guest/en/websys/webArch/getStatus.cgi"
-    url_willow = "http://willow.inm7.de/web/guest/de/websys/webArch/getStatus.cgi"
-    url_larch = "http://larch.inm7.de/web/guest/de/websys/webArch/getStatus.cgi"
+    urls = []
 
-    urls = [url_oak, url_pine, url_willow, url_larch]
+    # gets current working directory and constructs path to config file
+    here = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(here, 'printers.csv')
+
+    # parses config file, containing the names and URLs of the printers
+    with open(filename, 'r') as printers_csv:
+        filereader = csv.DictReader(printers_csv)
+        for row in filereader:
+            urls.append((row['printer_name'], row['printer_url']))
+            print(row['printer_name'] + " " + row['printer_url'])
 
     args = get_parsed_args()
 
@@ -60,9 +67,9 @@ def get_soups(urls: list, insec_bool: bool):
     soups = []
 
     for url in urls:
-        logging.info("Connecting to: " + url + " ...")
+        logging.info("Connecting to: " + url[1] + " ...")
 
-        r_url = requests.get(url, verify=not insec_bool)
+        r_url = requests.get(url[1], verify=not insec_bool)
         if r_url.status_code != 200:
             raise ConnectionError("Something's wrong with the Website:\n" + r_url + "\n" + str(r_url.status_code))
         soups.append(bs(r_url.text, 'html.parser'))
