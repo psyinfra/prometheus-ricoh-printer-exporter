@@ -23,6 +23,13 @@ class Printer:
     level_magenta = None
     level_yellow = None
 
+    def __init__(self, name: str, black: float, cyan: float, magenta: float, yellow: float) -> None:
+        self.name = name
+        self.level_black = black
+        self.level_cyan = cyan
+        self.level_magenta = magenta
+        self.level_yellow = yellow
+
 
 def get_urls() -> Dict[str, str]:
     # gets current working directory and constructs path to config file
@@ -65,17 +72,16 @@ def scrape_printers(printers: Dict[str, str], insecure: bool = False) -> Iterato
 
         data = BeautifulSoup(data.text, 'html.parser')
         tags = data.find_all('img', class_='ver-algn-m mgn-R5p bdr-1px-666', attrs='width')
-        print(tags)
         if not tags:
             logging.error(f'Scrape error from {name}: missing relevant tags')
             continue
 
         yield Printer(
             name=name,
-            level_black=get_toner_level(tags[0]),
-            level_cyan=get_toner_level(tags[1]),
-            level_magenta=get_toner_level(tags[2]),
-            level_yellow=get_toner_level(tags[3]))
+            black=get_toner_level(tags[0]),
+            cyan=get_toner_level(tags[1]),
+            magenta=get_toner_level(tags[2]),
+            yellow=get_toner_level(tags[3]))
 
 
 """
