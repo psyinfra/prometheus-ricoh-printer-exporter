@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup as bs
 from prometheus_client import start_http_server, REGISTRY
 from . import exporter_file
 
+
 def main():
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 

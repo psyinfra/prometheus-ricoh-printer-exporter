@@ -21,5 +21,4 @@ setup(
             'prometheus_ricoh_printer_exporter=prometheus_ricoh_printer_exporter.main:main'
         ],
     },
-
 )
