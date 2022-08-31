@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-''' setup file for installation of ricoh printer prometheus exporter '''
+"""setup file for installation of ricoh printer prometheus exporter"""
 from setuptools import setup, find_packages
 
 setup(
@@ -15,7 +15,7 @@ setup(
         'BeautifulSoup4',
         'prometheus_client'
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     entry_points={
         'console_scripts': [
             'prometheus_ricoh_printer_exporter=prometheus_ricoh_printer_exporter.main:main'
