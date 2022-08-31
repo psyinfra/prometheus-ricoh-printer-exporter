@@ -80,10 +80,10 @@ def scrape_printers(printers: Dict[str, str], insecure: bool = False) -> Iterato
 
 """
 def scrape_printers(html_objects: List[BeautifulSoup], urls: List[str]) -> Iterator[Printer]:
-    
+
     gets a list of html_objects and parses the toner levels for each.
     returns a generator, providing a Printer_Values object in each iteration for each printer URL
-    
+
 
     for (soup, url) in zip(html_objects, urls):
         tags = soup.find_all("img", class_="ver-algn-m mgn-R5p bdr-1px-666", attrs='width')  # html-tags related to toner levels
