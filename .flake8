@@ -1,2 +1,2 @@
 [flake8]
-ignore=W503
+ignore=E501, W503
