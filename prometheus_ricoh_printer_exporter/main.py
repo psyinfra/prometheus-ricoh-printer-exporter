@@ -10,7 +10,8 @@ import logging
 import urllib.parse
 from prometheus_client import start_http_server, REGISTRY
 from .data import get_urls
-from . import exporter
+from . import exporter_file
+
 
 DEFAULT_HOSTNAME = '0.0.0.0'
 DEFAULT_PORT = 9840
