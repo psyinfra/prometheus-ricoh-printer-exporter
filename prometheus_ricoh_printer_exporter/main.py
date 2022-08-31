@@ -10,7 +10,7 @@ import logging
 import urllib.parse
 from prometheus_client import start_http_server, REGISTRY
 from .data import get_urls
-from . import exporter_file
+from . import exporter
 
 
 DEFAULT_HOSTNAME = '0.0.0.0'
@@ -23,15 +23,20 @@ def main():
     args = parse_args()
     printers = get_urls()
 
-    listen_addr = urllib.parse.urlsplit(f'//{args.listen_address}')
+    # if listen_address is None, urlsplit would parse '//None' which would result in 'none' (String) as hostname
+    # annotation: solution not ideal
+    listen_addr = urllib.parse.urlsplit(f'//{args.listen_address}') if args.listen_address is not None else urllib.parse.urlsplit(None)
+
     addr = listen_addr.hostname if listen_addr.hostname else DEFAULT_HOSTNAME
     port = listen_addr.port if listen_addr.port else DEFAULT_PORT
 
-    REGISTRY.register(exporter_file.RicohPrinterExporter(printers, args.insecure))
+    print(addr)
+    print(port)
+
+    REGISTRY.register(exporter.RicohPrinterExporter(printers, args.insecure))
     start_http_server(port, addr=addr)
 
     # keep the thing going indefinitely
-    logging.info("Exporter started!")
     while True:
         time.sleep(1)
 
