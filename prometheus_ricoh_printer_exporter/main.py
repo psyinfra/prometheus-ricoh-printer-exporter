@@ -5,13 +5,13 @@
 # Exporter entry point
 
 import argparse
+import sys
 import time
 import logging
 import urllib.parse
 from prometheus_client import start_http_server, REGISTRY
 from .data import get_urls
 from . import exporter
-
 
 DEFAULT_HOSTNAME = '0.0.0.0'
 DEFAULT_PORT = 9840
@@ -38,6 +38,14 @@ def main():
     # keep the thing going indefinitely
     while True:
         time.sleep(1)
+
+
+def add_printer():
+    print("would add printer WIP")
+
+
+def remove_printer():
+    print("would remove printer WIP")
 
 
 def parse_args():
