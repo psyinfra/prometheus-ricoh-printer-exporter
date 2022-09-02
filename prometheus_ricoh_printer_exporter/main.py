@@ -5,7 +5,6 @@
 # Exporter entry point
 
 import argparse
-import sys
 import time
 import logging
 import urllib.parse
@@ -38,14 +37,6 @@ def main():
     # keep the thing going indefinitely
     while True:
         time.sleep(1)
-
-
-def add_printer():
-    print("would add printer WIP")
-
-
-def remove_printer():
-    print("would remove printer WIP")
 
 
 def parse_args():
