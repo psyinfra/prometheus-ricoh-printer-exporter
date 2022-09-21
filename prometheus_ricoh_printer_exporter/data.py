@@ -9,7 +9,7 @@ from typing import Dict
 from typing import Iterator
 from typing import Union
 from bs4 import BeautifulSoup
-import csv
+import json
 import logging
 import requests
 import os
@@ -31,18 +31,24 @@ class Printer:
         self.level_yellow = yellow
 
 
-def get_urls() -> Dict[str, str]:
-    # gets current working directory and constructs path to config file
-    here = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(here, 'printers.csv')
+def get_urls(config: str) -> Dict[str, str]:
+    # creates absolut path for config file
+    filename = os.path.abspath(config)
+    print(filename)
 
     # parses config file, containing the names and URLs of the printers
     urls = []
-    with open(filename, 'r') as printers_csv:
-        filereader = csv.DictReader(printers_csv)
-        for row in filereader:
-            urls.append((row['printer_name'], row['printer_url']))
-            print(row['printer_name'] + " " + row['printer_url'])
+    with open(filename, 'r') as printers_json:
+        data = json.load(printers_json)
+
+        for key, value in data.items():
+            try:
+                name = key
+                url = value['url']
+            except KeyError as exc:
+                raise KeyError(
+                    f'Error in configuration file: {exc} not found for {key}')
+            urls.append((name, url))
 
     return urls
 
