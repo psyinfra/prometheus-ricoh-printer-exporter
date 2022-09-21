@@ -13,9 +13,9 @@ setup(
     install_requires=[
         'requests',
         'BeautifulSoup4',
-        'prometheus_client'
+        'prometheus_client~=0.14.0'
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     entry_points={
         'console_scripts': [
             'prometheus_ricoh_printer_exporter=prometheus_ricoh_printer_exporter.main:main'
