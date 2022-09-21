@@ -1,0 +1,9 @@
+{
+    "printer1_name": {
+        "url": "https://address.to.printer"
+    },
+
+    "printer2_name": {
+        "url": "https://address.to.printer"
+    }
+}
