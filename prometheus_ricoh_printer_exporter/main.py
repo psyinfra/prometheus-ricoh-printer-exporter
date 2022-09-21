@@ -20,7 +20,9 @@ def main():
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
     args = parse_args()
-    printers = get_urls()
+
+    config_file = args.config
+    printers = get_urls(config_file)
 
     # if listen_address is None, urlsplit would parse '//None' which would result in 'none' (String) as hostname
     # annotation: solution not ideal
@@ -58,6 +60,13 @@ def parse_args():
         action='store_true',
         default=False,
         help='Skip SSL validation of the printer website.')
+    group.add_argument(
+        "-c", "--config",
+        help="Configuration JSON file containing "
+             "UPS addresses and login info."
+             "NOTE: make sure to provide an absolute path to ensure the file is found.",
+        required=True
+    )
 
     return parser.parse_args()
 
