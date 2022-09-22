@@ -12,7 +12,7 @@ from prometheus_client import start_http_server, REGISTRY
 from .data import get_urls
 from . import exporter
 
-DEFAULT_HOSTNAME = '0.0.0.0'
+DEFAULT_LISTEN_INTERFACE = '0.0.0.0'
 DEFAULT_PORT = 9840
 
 
@@ -28,7 +28,7 @@ def main():
     # annotation: solution not ideal
     listen_addr = urllib.parse.urlsplit(f'//{args.listen_address}') if args.listen_address is not None else urllib.parse.urlsplit(None)
 
-    addr = listen_addr.hostname if listen_addr.hostname else DEFAULT_HOSTNAME
+    addr = listen_addr.hostname if listen_addr.hostname else DEFAULT_LISTEN_INTERFACE
     port = listen_addr.port if listen_addr.port else DEFAULT_PORT
 
     REGISTRY.register(exporter.RicohPrinterExporter(printers, args.insecure))
