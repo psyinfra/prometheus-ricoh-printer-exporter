@@ -189,3 +189,11 @@ prometheus_ricoh_printer_exporter.egg-info/top_level.txt
 
 # private config file for testing
 printers.json
+
+# PyCharm leftovers
+.idea/misc.xml
+.idea/.gitignore
+.idea/modules.xml
+.idea/prometheus-ricoh-printer-exporter-1.iml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
