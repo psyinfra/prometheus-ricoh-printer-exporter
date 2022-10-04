@@ -11,7 +11,7 @@ A template can be found in the repository under the name of config_example.json
 
 To test the exporter, you can host the script on your own machine:
   1. `prometheus_ricoh_printer_exporter -c <abspath to config file>` (make sure you installed via pip)
-  2. (from another terminal) `curl 0.0.0.0:9840` (default IP-address)
+  2. (from another terminal) `curl 0.0.0.0:9840` (that's the default IP-address)
 
 Running `curl 0.0.0.0:9840` should give you an output of similar structure
 like this:

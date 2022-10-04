@@ -43,24 +43,22 @@ def parse_args():
     '''argparser; returns the args from command line'''
 
     parser = argparse.ArgumentParser(
-        description='Set up the Prometheus exporter (connection ports)')
+        description='Set up the Prometheus exporter (printers and connection ports)')
 
-    group = parser.add_argument_group()
-
-    group.add_argument(
+    parser.add_argument(
         '-w', '--web.listen-address',
         type=str,
         dest='listen_address',
         help=f'Address and port to expose metrics and web interface. Default: ":{DEFAULT_PORT}"\n'
         'To listen on all interfaces, omit the IP. ":<port>"`\n'
         'To listen on a specific IP: <address>:<port>')
-    group.add_argument(
+    parser.add_argument(
         '-i', '--insecure',
         dest='insecure',
         action='store_true',
         default=False,
         help='Skip SSL validation of the printer website.')
-    group.add_argument(
+    parser.add_argument(
         "-c", "--config",
         help="Configuration JSON file containing "
              "UPS addresses and login info."
