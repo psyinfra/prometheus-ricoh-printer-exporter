@@ -25,7 +25,7 @@ def main():
     printers = get_urls(config_file)
 
     # if listen_address is None, urlsplit would parse '//None' which would result in 'none' (String) as hostname
-    # annotation: solution not ideal
+    # annotation: solution is not ideal
     listen_addr = urllib.parse.urlsplit(f'//{args.listen_address}') if args.listen_address is not None else urllib.parse.urlsplit(None)
 
     addr = listen_addr.hostname if listen_addr.hostname else DEFAULT_LISTEN_INTERFACE
