@@ -2,7 +2,7 @@
 # Oskar Druska 2022
 # For further information look up LICENSE.txt
 
-# This will be the script that yields the needed information and "talks" to the printers
+# This is the script that yields the needed information and "talks" to the printers
 
 from dataclasses import dataclass
 from typing import Dict

@@ -3,7 +3,24 @@ Building a prometheus exporter for ricoh-printer related information like toner 
 
 ## Install
 You can install the exporter from this repository using the following command:
-`pip install git+https://github.com/o-druska/prometheus-ricoh-printer-exporter.git`
+`pip install git+https://github.com/psyinfra/prometheus-ricoh-printer-exporter`
+
+## Configuration
+To run the exporter, you need to provide a configuration file using the .json format.
+A template file "config_example.json" can be found at top-level in this repository.
+This is the template:
+
+```
+{
+    "printer1_name": {
+        "url": "https://address.to.printer"
+    },
+
+    "printer2_name": {
+        "url": "https://address.to.printer"
+    }
+}
+```
 
 ## Test
 You'll need a configuration file containing the names and URLs of the printers you want to scrape.
