@@ -31,8 +31,9 @@ def main():
     addr = listen_addr.hostname if listen_addr.hostname else DEFAULT_LISTEN_INTERFACE
     port = listen_addr.port if listen_addr.port else DEFAULT_PORT
 
-    REGISTRY.register(exporter.RicohPrinterExporter(printers, args.insecure))
     start_http_server(port, addr=addr)
+    REGISTRY.register(exporter.RicohPrinterExporter(printers, args.insecure))
+    logging.info(f'Running on {addr}:{port}')
 
     # keep the thing going indefinitely
     while True:
