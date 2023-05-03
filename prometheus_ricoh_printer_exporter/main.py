@@ -13,7 +13,7 @@ from .data import get_urls
 from . import exporter
 
 DEFAULT_LISTEN_INTERFACE = '0.0.0.0'
-DEFAULT_PORT = 9840
+DEFAULT_PORT = 9188
 
 
 def main():
