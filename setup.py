@@ -11,7 +11,7 @@ setup(
     packages=find_packages(),
     license='ISC',
     install_requires=[
-        'requests',
+        'aiohttp',
         'BeautifulSoup4',
         'prometheus_client'
     ],

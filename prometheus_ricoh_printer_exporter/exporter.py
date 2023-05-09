@@ -1,7 +1,9 @@
+import asyncio
+
 from prometheus_client import Summary
 from prometheus_client.core import GaugeMetricFamily
 
-from . import Printer
+from .printer import Printer
 
 REQUEST_TIME = Summary(
     "ricoh_printer_exporter_collect_",
@@ -13,17 +15,22 @@ class RicohPrinterExporter:
         self.printers = [
             Printer(address=target, insecure=insecure) for target in targets]
 
+    async def _scrape(self):
+        return await asyncio.gather(
+            *[printer.scrape() for printer in self.printers])
+
     @REQUEST_TIME.time()
     def collect(self):
-        for printer in self.printers:
-            printer.scrape()
+        asyncio.run(self._scrape())
 
-            g = GaugeMetricFamily(
-                name='ricoh_printer_tonerlevel_percent',
-                labels=['address', 'color'],
-                documentation='toner level in percent')
-            g.add_metric([printer.address, 'black'], printer.toner.black)
-            g.add_metric([printer.address, 'cyan'], printer.toner.cyan)
-            g.add_metric([printer.address, 'magenta'], printer.toner.magenta)
-            g.add_metric([printer.address, 'yellow'], printer.toner.yellow)
-            yield g
+        g = GaugeMetricFamily(
+            name='ricoh_printer_tonerlevel_percent',
+            labels=['address', 'color'],
+            documentation='toner level in percent')
+
+        for printer in self.printers:
+            for color, value in printer.toner.items():
+                if value is not None:
+                    g.add_metric([printer.address, color], value)
+
+        yield g

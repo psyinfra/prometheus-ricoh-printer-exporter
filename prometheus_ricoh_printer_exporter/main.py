@@ -6,8 +6,8 @@ import urllib.parse
 
 from prometheus_client import start_http_server, REGISTRY
 
-from . import (
-    RicohPrinterExporter, DEFAULT_LISTEN_INTERFACE, DEFAULT_PORT)
+from . import DEFAULT_LISTEN_INTERFACE, DEFAULT_PORT
+from .exporter import RicohPrinterExporter
 
 
 def parse_args() -> argparse.Namespace:
