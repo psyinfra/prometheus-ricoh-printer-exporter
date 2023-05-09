@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import time
 import urllib.parse
@@ -6,63 +7,67 @@ import urllib.parse
 from prometheus_client import start_http_server, REGISTRY
 
 from . import (
-    get_urls, RicohPrinterExporter, DEFAULT_LISTEN_INTERFACE, DEFAULT_PORT)
+    RicohPrinterExporter, DEFAULT_LISTEN_INTERFACE, DEFAULT_PORT)
+
+
+def parse_args() -> argparse.Namespace:
+    """Parse arguments when executed as a script"""
+    parser = argparse.ArgumentParser(
+        description='Python-based Ricoh Printer exporter for prometheus.io')
+    parser.add_argument(
+        '-w', '--web.listen-address', type=str, required=False,
+        dest='listen_address', default=f':{DEFAULT_PORT}',
+        help=f'Address and port to listen on (default = :{DEFAULT_PORT})')
+    parser.add_argument(
+        '-c', '--config', metavar='config', dest='config', required=False,
+        help='configuration json file containing printer web-ui addresses')
+    parser.add_argument(
+        '-t', '--targets', metavar='targets', dest='targets', nargs='+',
+        required=False)
+    parser.add_argument(
+        '-i', '--insecure', dest='insecure', action='store_true',
+        default=False, help='Skip SSL validation of the printer web-ui')
+
+    args = parser.parse_args()
+
+    if args.targets and args.config:
+        parser.error('Cannot use --targets and --config together')
+    elif not args.targets and not args.config:
+        parser.error('Either --targets or --config is required')
+
+    return args
+
+
+def get_targets(config: str = None) -> list[str]:
+    """Get printer target URIs from a config json file"""
+    with open(config, 'r') as file:
+        data = json.load(file)
+
+    if not isinstance(data, list) or not all(isinstance(x, str) for x in data):
+        raise TypeError('Config must contain only a list of strings')
+
+    return data
 
 
 def main():
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
     args = parse_args()
+    targets = get_targets(args.config) if args.config else args.targets
+    addr = urllib.parse.urlsplit(f'//{args.listen_address}')
+    hostname = addr.hostname if addr.hostname else DEFAULT_LISTEN_INTERFACE
+    port = addr.port if addr.port else DEFAULT_PORT
 
-    config_file = args.config
-    printers = get_urls(config_file)
+    start_http_server(port, addr=hostname)
+    REGISTRY.register(RicohPrinterExporter(targets, args.insecure))
+    logging.info('listening on %s' % addr.netloc)
 
-    # if listen_address is None, urlsplit would parse '//None' which would result in 'none' (String) as hostname
-    # annotation: solution is not ideal
-    listen_addr = urllib.parse.urlsplit(f'//{args.listen_address}') if args.listen_address is not None else urllib.parse.urlsplit(None)
-
-    addr = listen_addr.hostname if listen_addr.hostname else DEFAULT_LISTEN_INTERFACE
-    port = listen_addr.port if listen_addr.port else DEFAULT_PORT
-
-    start_http_server(port, addr=addr)
-    REGISTRY.register(RicohPrinterExporter(printers, args.insecure))
-    logging.info(f'Running on {addr}:{port}')
-
-    # keep the thing going indefinitely
-    while True:
-        time.sleep(1)
-
-
-def parse_args():
-    '''argparser; returns the args from command line'''
-
-    parser = argparse.ArgumentParser(
-        description='Set up the Prometheus exporter (connection ports)')
-
-    group = parser.add_argument_group()
-
-    group.add_argument(
-        '-w', '--web.listen-address',
-        type=str,
-        dest='listen_address',
-        help=f'Address and port to expose metrics and web interface. Default: ":{DEFAULT_PORT}"\n'
-        'To listen on all interfaces, omit the IP. ":<port>"`\n'
-        'To listen on a specific IP: <address>:<port>')
-    group.add_argument(
-        '-i', '--insecure',
-        dest='insecure',
-        action='store_true',
-        default=False,
-        help='Skip SSL validation of the printer website.')
-    group.add_argument(
-        "-c", "--config",
-        help="Configuration JSON file containing "
-             "UPS addresses and login info."
-             "NOTE: make sure to provide an absolute path to ensure the file is found.",
-        required=True
-    )
-
-    return parser.parse_args()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        logging.info('Interrupted by user')
+        exit(0)
 
 
 if __name__ == '__main__':

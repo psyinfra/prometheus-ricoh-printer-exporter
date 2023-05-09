@@ -1,29 +1,29 @@
 from prometheus_client import Summary
 from prometheus_client.core import GaugeMetricFamily
 
-from . import scrape_printers
+from . import Printer
 
-REQUEST_TIME = Summary("ricoh_printer_exporter_collect_",
-                       "Time spent to collect metrics from ricoh_data_crawler.py")
+REQUEST_TIME = Summary(
+    "ricoh_printer_exporter_collect_",
+    "Time spent to collect metrics from ricoh_data_crawler.py")
 
 
 class RicohPrinterExporter:
-    def __init__(self, printers, insec: bool) -> None:
-        self.printers = printers
-        self.insecure = insec
+    def __init__(self, targets: list[str], insecure: bool) -> None:
+        self.printers = [
+            Printer(address=target, insecure=insecure) for target in targets]
 
     @REQUEST_TIME.time()
     def collect(self):
-        # returns a Printer_Values object in each generator call
-        printers = scrape_printers(printers=self.printers, insecure=self.insecure)
+        for printer in self.printers:
+            printer.scrape()
 
-        for printer in printers:
             g = GaugeMetricFamily(
-                name='ricoh_printer_level_percent',
-                labels=['name', 'color'],
+                name='ricoh_printer_tonerlevel_percent',
+                labels=['address', 'color'],
                 documentation='toner level in percent')
-            g.add_metric([printer.name, 'black'], printer.level_black)
-            g.add_metric([printer.name, 'cyan'], printer.level_cyan)
-            g.add_metric([printer.name, 'magenta'], printer.level_magenta)
-            g.add_metric([printer.name, 'yellow'], printer.level_yellow)
+            g.add_metric([printer.address, 'black'], printer.toner.black)
+            g.add_metric([printer.address, 'cyan'], printer.toner.cyan)
+            g.add_metric([printer.address, 'magenta'], printer.toner.magenta)
+            g.add_metric([printer.address, 'yellow'], printer.toner.yellow)
             yield g
