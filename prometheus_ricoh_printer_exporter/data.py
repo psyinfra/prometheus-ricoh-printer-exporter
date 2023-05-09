@@ -5,14 +5,13 @@
 # This is the script that yields the needed information and "talks" to the printers
 
 from dataclasses import dataclass
-from typing import Dict
-from typing import Iterator
-from typing import Union
-from bs4 import BeautifulSoup
+from typing import Dict, Iterator, Union
 import json
 import logging
 import requests
 import os
+
+from bs4 import BeautifulSoup
 
 
 @dataclass

@@ -5,15 +5,14 @@
 # Exporter entry point
 
 import argparse
-import time
 import logging
+import time
 import urllib.parse
-from prometheus_client import start_http_server, REGISTRY
-from .data import get_urls
-from . import exporter
 
-DEFAULT_LISTEN_INTERFACE = '0.0.0.0'
-DEFAULT_PORT = 9188
+from prometheus_client import start_http_server, REGISTRY
+
+from . import (
+    get_urls, RicohPrinterExporter, DEFAULT_LISTEN_INTERFACE, DEFAULT_PORT)
 
 
 def main():
@@ -32,7 +31,7 @@ def main():
     port = listen_addr.port if listen_addr.port else DEFAULT_PORT
 
     start_http_server(port, addr=addr)
-    REGISTRY.register(exporter.RicohPrinterExporter(printers, args.insecure))
+    REGISTRY.register(RicohPrinterExporter(printers, args.insecure))
     logging.info(f'Running on {addr}:{port}')
 
     # keep the thing going indefinitely
