@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
-"""setup file for installation of ricoh printer prometheus exporter"""
 from setuptools import setup, find_packages
 
 setup(
     name='prometheus_ricoh_printer_exporter',
-    version='1.3.0',
-    description='prometheus exporter for printer status for INM7s Ricoh printers',
+    version='1.4.0',
+    description=(
+        'Python-based Prometheus exporter to retrieve data from Ricoh '
+        'printers'),
     author='Oskar Druska',
     author_email='o.druska@fz-juelich.de',
     packages=find_packages(),
@@ -18,7 +18,7 @@ setup(
     python_requires=">=3.7",
     entry_points={
         'console_scripts': [
-            'prometheus_ricoh_printer_exporter=prometheus_ricoh_printer_exporter.main:main'
+            'prometheus_ricoh_printer_exporter=prometheus_ricoh_printer_exporter.main:main'  # noqa: E501
         ],
     },
 )

@@ -1,56 +1,54 @@
 # prometheus-ricoh-printer-exporter
-Building a prometheus exporter for ricoh-printer related information like toner level
+A Python-based Prometheus exporter for retrieving data from Ricoh printers. 
+Currently the exporter retrieves toner levels, component status, and a page 
+count for printed, copied, scanned, and faxed pages.
 
 ## Install
 You can install the exporter from this repository using the following command:
 `pip install git+https://github.com/psyinfra/prometheus-ricoh-printer-exporter`
 
 ## Configuration
-To run the exporter, you need to provide a configuration file using the .json format.
-A template file "config_example.json" can be found at top-level in this repository.
-This is the template:
+The exporter can be configured using either a configuration file providing a 
+json array of targeted printers (see `config_example.json`) or by providing 
+the `--targets` argument with a list of printer addresses.
 
-```
-{
-    "printer1_name": {
-        "url": "https://address.to.printer"
-    },
-
-    "printer2_name": {
-        "url": "https://address.to.printer"
-    }
-}
+Example configuration file:
+```json
+[
+  "https://printer1.url",
+  "https://printer2.url"
+]
 ```
 
-## Test
-You'll need a configuration file containing the names and URLs of the printers you want to scrape.
-A template can be found in the repository under the name of config_example.json
+## Example
+The exporter can be run with a configuration file using:
 
-To test the exporter, you can host the script on your own machine:
-  1. `prometheus_ricoh_printer_exporter -c <abspath to config file>` (make sure you installed via pip)
-  2. (from another terminal) `curl 0.0.0.0:9188` (default IP-address)
+```commandline
+prometheus_ricoh_printer_exporter -c config_example.json
+```
 
-Running `curl 0.0.0.0:9188` should give you an output of similar structure
-like this:
+or by using the `--targets` flag
+```commandline
+prometheus_ricoh_printer_exporter -t https://printer1.url https://printer2.url
 ```
-# HELP ricoh_printer_level_percent black toner level in percent
-# TYPE ricoh_printer_level_percent gauge
-ricoh_printer_level_percent{color="black",printer_name="oak"} 50.0
-```
-(The output should be similar for other data points, i.e. cyan)
+
+To read the output in Prometheus format, use `curl 0.0.0.0:9188`. This 
+address and port can differ if a custom `--web.listen-address` was used.
 
 ## Usage
 ```
-usage: prometheus_ricoh_printer_exporter [-h] [-w LISTEN_ADDRESS] [-i] -c CONFIG
+usage: prometheus_ricoh_printer_exporter [-h] [-w LISTEN_ADDRESS] [-c config] [-t targets [targets ...]] [-i]
 
-Set up the Prometheus exporter (connection ports)
+Python-based Ricoh Printer exporter for prometheus.io
 
-options:
+optional arguments:
   -h, --help            show this help message and exit
-
   -w LISTEN_ADDRESS, --web.listen-address LISTEN_ADDRESS
-                        Address and port to expose metrics and web interface. Default: ":9188" To listen on all interfaces, omit the IP. ":<port>"` To listen on a specific IP: <address>:<port>
-  -i, --insecure        Skip SSL validation of the printer website.
-  -c CONFIG, --config CONFIG
-                        Configuration JSON file containing UPS addresses and login info.NOTE: make sure to provide an absolute path to ensure the file is found.
+                        Address and port to listen on (default = :9188)
+  -c config, --config config
+                        configuration json file containing printer web-ui addresses
+  -t targets [targets ...], --targets targets [targets ...]
+  -i, --insecure        Skip SSL validation of the printer web-ui
 ```
+
+Note that either `-c` or `-t` is required, but they cannot be used together.
