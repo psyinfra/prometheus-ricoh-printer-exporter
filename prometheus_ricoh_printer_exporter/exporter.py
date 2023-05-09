@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 import asyncio
 
 from prometheus_client import Summary
@@ -29,9 +30,10 @@ class RicohPrinterExporter:
             documentation='toner level in percent')
 
         for printer in self.printers:
+            address = urlparse(printer.address).netloc
             for color, value in printer.toner.items():
                 if value is not None:
-                    g.add_metric([printer.address, color], value)
+                    g.add_metric([address, color], value)
 
         yield g
 
@@ -41,9 +43,10 @@ class RicohPrinterExporter:
             documentation='total pages printed')
 
         for printer in self.printers:
+            address = urlparse(printer.address).netloc
             for color, value in printer.pages.get('printed', {}).items():
                 if value is not None:
-                    g.add_metric([printer.address, color], value)
+                    g.add_metric([address, color], value)
 
         yield g
 
@@ -53,9 +56,10 @@ class RicohPrinterExporter:
             documentation='total pages copied')
 
         for printer in self.printers:
+            address = urlparse(printer.address).netloc
             for color, value in printer.pages.get('copied', {}).items():
                 if value is not None:
-                    g.add_metric([printer.address, color], value)
+                    g.add_metric([address, color], value)
 
         yield g
 
@@ -65,9 +69,10 @@ class RicohPrinterExporter:
             documentation='total pages faxed')
 
         for printer in self.printers:
+            address = urlparse(printer.address).netloc
             for typ, value in printer.pages.get('faxed', {}).items():
                 if value is not None:
-                    g.add_metric([printer.address, typ], value)
+                    g.add_metric([address, typ], value)
 
         yield g
 
@@ -77,8 +82,22 @@ class RicohPrinterExporter:
             documentation='total pages scanned')
 
         for printer in self.printers:
+            address = urlparse(printer.address).netloc
             for color, value in printer.pages.get('scanned', {}).items():
                 if value is not None:
-                    g.add_metric([printer.address, color], value)
+                    g.add_metric([address, color], value)
+
+        yield g
+
+        g = GaugeMetricFamily(
+            name='ricoh_printer_status',
+            labels=['address', 'type'],
+            documentation='status of printer components')
+
+        for printer in self.printers:
+            address = urlparse(printer.address).netloc
+            for typ, value in printer.status.items():
+                if value is not None:
+                    g.add_metric([address, typ], value)
 
         yield g

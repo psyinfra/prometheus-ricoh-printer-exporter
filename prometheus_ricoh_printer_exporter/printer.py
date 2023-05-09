@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from ssl import SSLCertVerificationError
 from typing import Union
-from urllib.parse import urljoin
+from urllib.parse import urljoin, ParseResult
 import logging
 
 from aiohttp import (
@@ -9,12 +9,12 @@ from aiohttp import (
 from aiohttp.web import HTTPException
 from bs4 import BeautifulSoup
 
-from . import ENDPOINT_TONER, ENDPOINT_PAGES
+from . import ENDPOINT_PAGES, ENDPOINT_STATUS, ENDPOINT_TONER
 
 
 async def read_target(url: str, ssl: bool) -> BeautifulSoup:
     async with ClientSession(
-            timeout=ClientTimeout(total=10),
+            timeout=ClientTimeout(total=60),
             connector=TCPConnector(ssl=None if ssl else False)) as session:
         async with session.get(url) as response:
             text = await response.read()
@@ -37,15 +37,18 @@ def toner_level(tag: dict) -> Union[float, None]:
 class Printer:
     address: str
     insecure: bool = field(default=False)
-    toner: dict = field(init=False)
     pages: dict = field(init=False)
+    status: dict = field(init=False)
+    toner: dict = field(init=False)
 
     async def scrape(self) -> None:
-        toner_address = urljoin(self.address, ENDPOINT_TONER)
         pages_address = urljoin(self.address, ENDPOINT_PAGES)
+        status_address = urljoin(self.address, ENDPOINT_STATUS)
+        toner_address = urljoin(self.address, ENDPOINT_TONER)
 
-        self.toner = await self.scrape_toner(target=toner_address)
         self.pages = await self.scrape_pages(target=pages_address)
+        self.status = await self.scrape_status(target=status_address)
+        self.toner = await self.scrape_toner(target=toner_address)
 
     async def scrape_toner(self, target: str) -> dict[str, float]:
         try:
@@ -107,3 +110,33 @@ class Printer:
             'scanned': {
                 'fullcolor': tags[mapping[10]].string,
                 'blackwhite': tags[mapping[11]].string}}
+
+    async def scrape_status(self, target: str) -> dict[str, int]:
+        try:
+            soup = await read_target(target, not self.insecure)
+        except (
+                SSLCertVerificationError, HTTPException,
+                ServerTimeoutError) as exc:
+            logging.error(f'({target}) {exc}')
+            return {}
+
+        try:
+            tags = soup.find(id='machine').find_all('dd')[3:]
+        except IndexError:
+            return {}
+
+        if len(tags) == 4:
+            return {
+                'system': 1 if tags[0].text == 'Status OK' else 0,
+                'toner': 1 if tags[1].text == 'Status OK' else 0,
+                'input_tray': 1 if tags[2].text == 'Status OK' else 0,
+                'output_tray': 1 if tags[3].text == 'Status OK' else 0}
+        elif len(tags) == 5:
+            return {
+                'system': 1 if tags[0].text == 'Status OK' else 0,
+                'toner': 1 if tags[1].text == 'Status OK' else 0,
+                'waste_toner_bottle': 1 if tags[2].text == 'Status OK' else 0,
+                'input_tray': 1 if tags[3].text == 'Status OK' else 0,
+                'output_tray': 1 if tags[4].text == 'Status OK' else 0}
+        else:
+            return {}
