@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from ssl import SSLCertVerificationError
 from typing import Union
-from urllib.parse import urljoin, ParseResult
+from urllib.parse import urljoin
 import logging
 
 from aiohttp import (
