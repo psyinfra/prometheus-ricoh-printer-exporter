@@ -1,9 +1,3 @@
-# This file is licensed under the ISC license.
-# Oskar Druska 2022
-# For further information look up LICENSE.txt
-
-# Exporter entry point
-
 import argparse
 import logging
 import time
