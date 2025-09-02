@@ -1,6 +1,6 @@
 # prometheus-ricoh-printer-exporter
-A Python-based Prometheus exporter for retrieving data from Ricoh printers. 
-Currently the exporter retrieves toner levels, component status, and a page 
+A Python-based Prometheus exporter for retrieving data from Ricoh printers.
+Currently the exporter retrieves toner levels, component status, and a page
 count for printed, copied, scanned, and faxed pages.
 
 ## Install
@@ -8,8 +8,8 @@ You can install the exporter from this repository using the following command:
 `pip install git+https://github.com/psyinfra/prometheus-ricoh-printer-exporter`
 
 ## Configuration
-The exporter can be configured using either a configuration file providing a 
-json array of targeted printers (see `config_example.json`) or by providing 
+The exporter can be configured using either a configuration file providing a
+json array of targeted printers (see `config_example.json`) or by providing
 the `--targets` argument with a list of printer addresses.
 
 Example configuration file:
@@ -32,7 +32,7 @@ or by using the `--targets` flag
 prometheus_ricoh_printer_exporter -t https://printer1.url https://printer2.url
 ```
 
-To read the output in Prometheus format, use `curl 0.0.0.0:9188`. This 
+To read the output in Prometheus format, use `curl 0.0.0.0:9188`. This
 address and port can differ if a custom `--web.listen-address` was used.
 
 ## Usage
