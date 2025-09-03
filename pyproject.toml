@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prometheus_ricoh_printer_exporter"
+authors = [
+    {name = "Oskar Druska"},
+]
+description = "Prometheus exporter to retrieve data from Ricoh printers."
+version = "v1.5.0"
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["prometheus", "ricoh", "printer", "exporter"]
+license = {text = "ISC"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    'aiohttp',
+    'bs4',
+    'prometheus_client',
+]
+
+[project.urls]
+"Bug Reports" = "https://github.com/psyinfra/prometheus-ricoh-printer-exporter/issues"
+"Source" = "https://github.com/psyinfra/prometheus-ricoh-printer-exporter"
+
+[project.optional-dependencies]
+tests = []
+
+[project.scripts]
+prometheus_eaton_ups_exporter = "prometheus_eaton_ups_exporter.main:main"
+
+[tool.setuptools.packages]
+find = {}  # Scanning implicit namespaces is active by default
+
