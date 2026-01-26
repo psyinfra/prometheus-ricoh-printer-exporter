@@ -1,3 +1,9 @@
+# Migrated to Codeberg
+
+This project is no longer developed on GitHub and has been migrated to Codeberg:
+
+https://codeberg.org/psyinfra/prometheus-ricoh-printer-exporter
+
 # prometheus-ricoh-printer-exporter
 A Python-based Prometheus exporter for retrieving data from Ricoh printers.
 Currently the exporter retrieves toner levels, component status, and a page
